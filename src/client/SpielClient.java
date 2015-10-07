@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,9 +18,11 @@ import impl.SpielInterface;
 
 public class SpielClient extends JFrame implements ActionListener {
 	private JPanel pnlField = new JPanel();
-	private SpielInterface interfaceConn = getConn();
+	private SpielInterface intConn = getConn();
 	private List<String> setFields = new ArrayList<String>();
 	private String playerName = null;
+	private String oppName = null;
+	private JButton[][] btnField = new JButton[10][10];
 
 	public enum Zustand {
 		Setzen, Schieﬂen
@@ -28,25 +31,20 @@ public class SpielClient extends JFrame implements ActionListener {
 	public Zustand zustand;
 
 	public void createGUI() {
-		pnlField.setLayout(new GridLayout(10, 10));
-		createBtnField(); // Ruft die Funktion CreateBtnField auf.
-		add(pnlField); // Fuegt dem JFrame das Panel 'pnlField' hinzu.
 
-		setSize(600, 600);
-		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("BombSearch - Client");
+		createBtnField();
+		this.setSize(600, 600);
+		this.setVisible(true);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setTitle("BombSearch - Client");
+		pnlField.setSize(500, 500);
+		pnlField.setLayout(new GridLayout(10, 10));
+		this.add(pnlField);
 	}
 
-	private void createBtnField() { // Erstellt das Button Array und fuegt es
-									// dem Panel 'pnlField' hinzu.
-		JButton[][] btnField = new JButton[10][10]; // Erzeugt ein
-													// Mehrdimensionales (10*10)
-													// JButton Array
-
+	private void createBtnField() {
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 10; y++) {
-				// btnField[x][y] = new JButton("" + x + y + "");
 				btnField[x][y] = new JButton("");
 				btnField[x][y].addActionListener(this);
 				btnField[x][y].setActionCommand(x + "|" + y);
@@ -55,46 +53,76 @@ public class SpielClient extends JFrame implements ActionListener {
 		}
 	}
 
+	public void exitGame(String message) {
+		try {
+			intConn.logout(playerName);
+			JOptionPane.showMessageDialog(pnlField, message);
+			System.exit(0);
+		} catch (Exception logout) {
+			JOptionPane.showMessageDialog(pnlField, "Bei dem beenden des Spiels ist ein Fehler aufgetreten!\nIst der Server offline?");
+			System.exit(0);
+		}
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		if (zustand == Zustand.Setzen) {
 			try {
+				((JButton) e.getSource()).setBackground(new Color(4, 99, 4));
+				((JButton) e.getSource()).setEnabled(false);
 				setBombs(((JButton) e.getSource()).getActionCommand());
 			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
 		}
 
 		else if (zustand == Zustand.Schieﬂen) {
 			try {
-				if(interfaceConn.shotField(playerName, ((JButton) e.getSource()).getActionCommand()) == 1){
-					JOptionPane.showMessageDialog(pnlField, "Treffer!");
+				if (intConn.getGameOver() == true) {
+					this.exitGame("Game over!\nSchade, Sie haben verloren.");
 				}
-				else {
-					JOptionPane.showMessageDialog(pnlField, "Daneben!");
+				
+				if (intConn.clientsAlive() == false) {
+					this.exitGame("Ihr Gegenspieler hat das Spiel verlassen.\nSie haben gewonnen!");
+				}
+
+				if (intConn.getPlayerStatus(playerName) == true) {
+					intConn.toggleStatus(playerName, oppName);
+					if (intConn.checkShot(oppName, ((JButton) e.getSource()).getActionCommand()) == true) {
+						//((JButton) e.getSource()).setIcon(new ImageIcon());
+						((JButton) e.getSource()).setBackground(new Color(255, 0, 0));
+						intConn.setScore(playerName);
+
+						if (intConn.getScore(playerName) == true) {
+							this.exitGame("Herzlichen Gl¸ckwunsch!\nSie haben gewonnen.");
+						}
+
+					} else {
+						((JButton) e.getSource()).setBackground(new Color(0, 150, 255));
+					}
+					this.repaint();
+					this.invalidate();
+					((JButton) e.getSource()).setEnabled(false);
 				}
 			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				this.exitGame("Die Verbindung zum Server wurde unterbrochen.");
 			}
 		}
 	}
 
-	private static SpielInterface getConn() {
+	private SpielInterface getConn() {
 		try {
-			SpielInterface interfaceConn = (SpielInterface) Naming.lookup("Spielbrett"); // TODO
-																							// LAN
-																							// verf¸gbarkeit
-			System.out.println("Die Verbindung zum Server wurde erfolgreich hergestellt.");
-
+			SpielInterface interfaceConn = (SpielInterface) Naming.lookup("Spielbrett");
 			return interfaceConn;
 		} catch (Exception e) {
-			System.out.println("Die Verbindung zum Server konnte nicht hergestellt werden.");
+			this.exitGame("Die Verbindung zu dem Server konnte nicht hergestellt werden.\nIst der Server online?");
 		}
 		return null;
 	}
 
-	private void setBombs(String fields) throws RemoteException {
+	private void setBombs(String fields) throws RemoteException, InterruptedException {
 		setFields.add(fields);
 		if (setFields.size() == 10) {
 			String[] tempArr = new String[10];
@@ -103,40 +131,52 @@ public class SpielClient extends JFrame implements ActionListener {
 				tempArr[x] = setFields.get(x);
 			}
 
-			interfaceConn.setBombs(playerName, tempArr);
-			pnlField.setEnabled(false);
+			intConn.setBombs(playerName, tempArr);
 			JOptionPane.showMessageDialog(pnlField, "Setzphase beendet");
-			while (interfaceConn.waitForAction(playerName) == 0) {
-
+			try {
+				oppName = intConn.getOpponentName(playerName);
+				while (intConn.waitForBombs(oppName) == false) {
+					Thread.sleep(5000);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				this.exitGame("Es wurde kein anderer Spieler gefunden!\nDas Spiel wird beendet.");
 			}
+			this.clearField();
+			intConn.rollTheDice(playerName, oppName);
 			JOptionPane.showMessageDialog(pnlField, "Spieler bereit.");
+			if (intConn.getPlayerStatus(playerName)) {
+				JOptionPane.showMessageDialog(pnlField, "Ihr Zug.");
+			}
 			zustand = Zustand.Schieﬂen;
+			// pnlField.setEnabled(intConn.getPlayerStatus(playerName));
 		}
 	}
-	
 
-	private String userLogin() {
+	private void userLogin() {
 
-		String s = JOptionPane.showInputDialog("Geben Sie Ihren Namen ein: ");
+		playerName = JOptionPane.showInputDialog("Geben Sie Ihren Namen ein: ");
 		try {
-			interfaceConn.login(s);
+			intConn.login(playerName);
 			zustand = Zustand.Setzen;
-			return s;
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(pnlField, "Login am Sever fehlgeschlagen!");
-			return null;
+			e.printStackTrace();
+			this.exitGame("Login am Sever fehlgeschlagen! Ist der Server online?");
 		}
 	}
 
-	private void setPlayerName(String name) {
-		playerName = name;
+	private void clearField() {
+		for (int x = 0; x < 10; x++) {
+			for (int y = 0; y < 10; y++) {
+				btnField[x][y].setEnabled(true);
+				btnField[x][y].setBackground(new Color(150, 150, 150));
+			}
+		}
 	}
 
 	public static void main(String args[]) {
 		SpielClient spielClient = new SpielClient();
 		spielClient.createGUI();
-		spielClient.setPlayerName(spielClient.userLogin());
-		// spielClient.setBombs();
-
+		spielClient.userLogin();
 	}
 }

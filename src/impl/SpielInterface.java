@@ -15,7 +15,7 @@ public interface SpielInterface extends Remote {
 	 * Spieler name wird abgemeldet und vom Server stack gelöscht
 	 */
 
-	public String getName(String name) throws RemoteException;
+	public String getOpponentName(String name) throws RemoteException;
 	/*
 	 * Spieler name holt sich den Namen des Gegenspielers
 	 */
@@ -25,7 +25,7 @@ public interface SpielInterface extends Remote {
 	 * Spieler name überträgt gesetzte Bomben in Array bombs[10]
 	 */
 
-	public int shotField(String name, String field) throws RemoteException;
+	public Boolean checkShot(String name, String field) throws RemoteException;
 	/*
 	 * Spieler name schießt auf Feld field. Returns String um "treffer" und
 	 * "fehlschüsse" anzuzeigen. String damit auch die Gewinnauswertung mit
@@ -33,5 +33,12 @@ public interface SpielInterface extends Remote {
 	 * Client local disabled
 	 */
 	
-	public int waitForAction(String name) throws RemoteException;
+	public Boolean waitForBombs(String name) throws RemoteException;
+	public void toggleStatus(String name, String oppName) throws RemoteException;
+	public Boolean getPlayerStatus(String name) throws RemoteException;
+	public void rollTheDice(String name, String oppname) throws RemoteException;
+	public Boolean getScore(String name) throws RemoteException;
+	public void setScore(String name) throws RemoteException;
+	public Boolean getGameOver() throws RemoteException;
+	public Boolean clientsAlive() throws RemoteException;
 }

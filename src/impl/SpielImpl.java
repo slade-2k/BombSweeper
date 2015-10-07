@@ -2,99 +2,140 @@ package impl;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
+
+import server.Spieler;
 
 public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
-	public List<String> playerList = new ArrayList<String>();
-	public String[] bombArrayPlayer1 = new String[10];
-	public String[] bombArrayPlayer2 = new String[10];
-	public String bomb1 = "empty";
-	public String bomb2 = "empty";
-	
+	// public List<String> playerList = new ArrayList<String>();
+	private Map<String, Spieler> players = new HashMap<String, Spieler>();
+	private Boolean gameOver = false;
+
 	public SpielImpl() throws RemoteException {
-		
 	}
-	
-	public void login(String name){
-		if(playerList.size() < 2) {
-			playerList.add(name);
-			System.out.println("Spieler "+ playerList.get(playerList.size() -1) + " hat sich registriert.");
-		}
+
+	public void login(String name) {
+		players.put(name, new Spieler(name));
+		Spieler player = players.get(name);
+		System.out.println("Spieler " + player.getName() + " hat sich angemeldet.");
 	}
-	
+
 	public void logout(String name) {
-		playerList.remove(name);
+		Spieler player = players.remove(name);
+		System.out.println("Spieler " + player.getName() + " hat das Spiel verlassen.");
+	}
+
+	public String getOpponentName(String name) {
+		Iterator<String> it = players.keySet().iterator();
+		while (it.hasNext()) {
+			String key = (String) it.next();
+			if (!key.equals(name)) {
+				return key;
+			}
+		}
+		return null;
 	}
 	
-	public String getName(String name) {
-		((ArrayList<String>)playerList).trimToSize();
-		
-		if (playerList.indexOf(name) == 0) {
-			return playerList.get(1);
+	public Boolean clientsAlive() {
+		if(players.size() == 2){
+			return true;
 		}
-		else {
-			return playerList.get(0);
+		return false;
+	}
+
+	public Boolean getScore(String name) {
+		Spieler player = players.get(name);
+		if (player.getHitCounter() == true) {
+			gameOver = true;
+			return true;
+		} else {
+			return false;
 		}
 	}
-	
-	public void setBombs(String name, String[] bombs) {					//Gedachtes Format bombs = {1|0, 4|5, 2|3, ...}
-		if(playerList.indexOf(name) == 0) {
-			bombArrayPlayer1 = Arrays.copyOf(bombs, 10);
-			System.out.println("Bomben von "+name+" erhalten.");
-			bomb1 = "set";
-			
-			for (int x = 0; x < 10; x++) {
-				System.out.println(bombArrayPlayer1[x]);
-			}
+
+	public Boolean getGameOver() {
+		if (gameOver == true) {
+			return true;
 		}
-		else {
-			bombArrayPlayer2 = Arrays.copyOf(bombs, 10);
-			System.out.println("Bomben von "+name+" erhalten.");
-			bomb2 = "set";
-			
-			for (int x = 0; x < 10; x++) {
-				System.out.println(bombArrayPlayer2[x]);
-			}
+		return false;
+	}
+
+	public void setScore(String name) {
+		Spieler player = players.get(name);
+		player.setHitCounter();
+	}
+
+	public void setBombs(String name, String[] bombs) {
+		Spieler player = players.get(name);
+		player.setBombArray(bombs);
+		System.out.println("Bomben von " + name + " erhalten.");
+
+		for (int x = 0; x < bombs.length; x++) {
+			System.out.println(bombs[x]);
 		}
 	}
-	
-	public int shotField(String name, String field) {
-		if(playerList.indexOf(name) == 0) {
-			if(Arrays.asList(bombArrayPlayer1).contains(field)) {
-				return 1;
-			}
-			else {
-				return 2;
-			}
-		}
-		else {
-			if(Arrays.asList(bombArrayPlayer2).contains(field)) {		//Gedachtes Format bombs = {1|0, 4|5, 2|3, ...}
-				return 1;
-			}
-			else {
-				return 2;
-			}
+
+	public Boolean checkShot(String name, String field) {
+		Spieler player = players.get(name);
+		if (Arrays.asList(player.getBombs()).contains(field)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
-	
-	public int waitForAction(String name) {
-		if(playerList.indexOf(name) == 0) {
-			if(bomb2.equals("set")) {
-				return 1;
-			}
-			else {
-				return 0;
-			}
+
+	public Boolean waitForBombs(String name) {
+		Spieler player = players.get(name);
+		if (player.getBombIndentificator() == false) {
+			return false;
+		} else {
+			return true;
 		}
-		else {
-			if(bomb1.equals("set")) {
-				return 1;
-			}
-			else {
-				return 0;
+	}
+
+	public Boolean getPlayerStatus(String name) {
+		Spieler player = players.get(name);
+		return player.getStatus();
+	}
+
+	public void toggleStatus(String name, String oppName) {
+		Spieler player = players.get(name);
+		Spieler player2 = players.get(oppName);
+
+		if (player.getStatus() == true) {
+			player.setStatus(false);
+			player2.setStatus(true);
+		} else {
+			player.setStatus(true);
+			player2.setStatus(false);
+		}
+	}
+
+	public void rollTheDice(String name, String oppName) {
+		Spieler player = players.get(name);
+		Spieler player2 = players.get(oppName);
+
+		if (player.getStatus() == null) {
+			Random rand = new Random();
+			int dice = rand.nextInt(2);
+			System.out.println("Würfel rollt: " + dice);
+			if (dice == 0) {
+				player.setStatus(true);
+				player2.setStatus(false);
+			} else {
+				player.setStatus(false);
+				player2.setStatus(true);
 			}
 		}
 	}
 }
+
+/*
+ * private Map<String, Spieler> players = new HashMap<String, Spieler>();
+ * players.put("Oliver", new Spieler("Oliver")); Spieler player =
+ * players.get("Oliver");
+ */
