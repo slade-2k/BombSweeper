@@ -44,10 +44,13 @@ public class SpielClient {
 	private SpielInterface getConn() {
 		try {
 			String ip = JOptionPane.showInputDialog("Geben Sie die IP des Severs ein:");
+			if(ip == null){
+				System.exit(0);
+			}
 			SpielInterface interfaceConn = (SpielInterface) Naming.lookup("rmi://"+ip+"/server"); //" + ip + ":" +Registry.REGISTRY_PORT + "\\server"
 			return interfaceConn;
 		} catch (Exception e) {
-			this.exitGame("Die Verbindung zu dem Server konnte nicht hergestellt werden.\nIst der Server online?");
+			//System.exit(0);
 			return null;
 		}
 	}
@@ -55,6 +58,9 @@ public class SpielClient {
 	private void userLogin() throws HeadlessException, RemoteException {
 		do {
 			String input = JOptionPane.showInputDialog("Geben Sie Ihren Namen ein: ");
+			if(input == null) {
+				System.exit(0);
+			}
 			playerName = input.toUpperCase();
 		} while (!intConn.login(playerName));
 		zustand = Zustand.Setzen;
