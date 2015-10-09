@@ -1,22 +1,26 @@
 package client;
 
-import java.awt.Dimension;
+import java.rmi.RemoteException;
 
-import javax.swing.JLabel;
+import impl.SpielInterface;
 
-public class StatusBar extends JLabel{
-	public StatusBar() {
-		super();
-		super.setPreferredSize(new Dimension(100, 16));
-		setText("");
-	}
+public class StatusBar extends Thread{
 	
-	public void toggleStatusBar(Boolean status) {
-		if(status == true){
-			this.setText("Ready");
-		}
-		else if(status == false){
-			this.setText("Warte auf Gegner");
-		}
+	private StatusBarGUI sbGUI = new StatusBarGUI();
+	
+	public void run(String playerName, SpielInterface intConn) {
+		do {
+			try {
+				if(intConn.getPlayerStatus(playerName)){
+					sbGUI.toggleStatusBar(true);
+				}
+				else {
+					sbGUI.toggleStatusBar(false);
+				}
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} while(true);
 	}
 }

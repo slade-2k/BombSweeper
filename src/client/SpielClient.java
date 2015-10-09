@@ -18,6 +18,7 @@ public class SpielClient {
 	private String playerName = null;
 	private String oppName = null;
 	private SpielGUI spielGUI = new SpielGUI();
+	private StatusBar sBar = new StatusBar();
 
 	public enum Zustand {
 		Setzen, Schieﬂen
@@ -43,7 +44,7 @@ public class SpielClient {
 
 	private SpielInterface getConn() {
 		try {
-			String ip = JOptionPane.showInputDialog("Geben Sie die IP des Severs ein:");
+			String ip = JOptionPane.showInputDialog(null, "Geben Sie die IP des Severs ein:", "192.168.5.41");
 			if(ip == null){
 				System.exit(0);
 			}
@@ -87,7 +88,7 @@ public class SpielClient {
 				spielGUI.paintShot(shot);
 				intConn.toggleStatus(playerName, oppName);
 				if (intConn.checkShot(oppName, shot.getActionCommand())) {
-					spielGUI.setButtonImage(".\\Sonstiges\bomb.jpeg", shot);
+					spielGUI.setButtonImage(".\\Sonstiges\\bomb.jpeg", shot);
 					intConn.setScore(playerName);
 
 					if (intConn.getScore(playerName) == true) {
