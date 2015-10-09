@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.HeadlessException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,8 @@ public class SpielClient {
 
 	private SpielInterface getConn() {
 		try {
-			SpielInterface interfaceConn = (SpielInterface) Naming.lookup("Spielbrett");
+			String ip = JOptionPane.showInputDialog("Geben Sie die IP des Severs ein:");
+			SpielInterface interfaceConn = (SpielInterface) Naming.lookup("rmi://"+ip+"/server"); //" + ip + ":" +Registry.REGISTRY_PORT + "\\server"
 			return interfaceConn;
 		} catch (Exception e) {
 			this.exitGame("Die Verbindung zu dem Server konnte nicht hergestellt werden.\nIst der Server online?");
@@ -73,6 +75,7 @@ public class SpielClient {
 		}
 	}
 
+	
 	public void setShot(JButton shot) {
 		try {
 			if (intConn.getPlayerStatus(playerName) == true) {
@@ -146,4 +149,5 @@ public class SpielClient {
 		SpielClient spielClient = new SpielClient();
 		spielClient.initGame();
 	}
+
 }

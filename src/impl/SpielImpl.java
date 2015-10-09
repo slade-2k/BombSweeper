@@ -117,7 +117,7 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 		Spieler player = players.get(name);
 		return player.getStatus();
 	}
-
+	
 	public void toggleStatus(String name, String oppName) {
 		Spieler player = players.get(name);
 		Spieler player2 = players.get(oppName);

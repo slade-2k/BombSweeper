@@ -8,10 +8,15 @@ public class StatusBar extends JLabel{
 	public StatusBar() {
 		super();
 		super.setPreferredSize(new Dimension(100, 16));
-		setMessage( "Ready");
+		setText("");
 	}
 	
-	public void setMessage(String message) {
-		setText(" "+message);
+	public void toggleStatusBar(Boolean status) {
+		if(status == true){
+			this.setText("Ready");
+		}
+		else if(status == false){
+			this.setText("Warte auf Gegner");
+		}
 	}
 }

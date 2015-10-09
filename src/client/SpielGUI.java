@@ -22,7 +22,7 @@ public class SpielGUI extends AbstractSpielClient {
 	private JButton[][] btnField = new JButton[10][10];
 	private SpielClient splClient;
 	private JPanel pnlField = new JPanel();
-	//private StatusBar statBar = new StatusBar();
+	private StatusBar statBar = new StatusBar();
 
 	public void createGUI(SpielClient caller) {
 
@@ -36,7 +36,7 @@ public class SpielGUI extends AbstractSpielClient {
 		pnlField.setLayout(new GridLayout(10, 10));
 		this.addWindowListener(this);
 		this.add(pnlField);
-		//getContentPane().add(statBar, java.awt.BorderLayout.SOUTH);
+		getContentPane().add(statBar, java.awt.BorderLayout.SOUTH);
 	}
 
 	private void createBtnField() {
@@ -59,6 +59,10 @@ public class SpielGUI extends AbstractSpielClient {
 		}
 	}
 
+//	public void setStatusBar(Boolean status) {
+//		statBar.toggleStatusBar(status);
+//	}
+	
 	public void setButtonImage(String path, JButton btn) {
 		try {
 			BufferedImage img = ImageIO.read(new File(path));
@@ -98,4 +102,5 @@ public class SpielGUI extends AbstractSpielClient {
 	public void windowClosing(WindowEvent e) {
 		splClient.exitGame("Spiel wird beendet.");
 	}
+
 }

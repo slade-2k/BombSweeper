@@ -2,7 +2,7 @@ package server;
 
 import java.util.Arrays;
 
-public class Spieler {
+public class Spieler{
 
 	private String name;
 	private String[] bombArray = null;
@@ -58,5 +58,4 @@ public class Spieler {
 	public void setStatus(Boolean stat) {
 		this.status = stat;
 	}
-
 }

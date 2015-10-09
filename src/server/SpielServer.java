@@ -16,7 +16,7 @@ public class SpielServer {
 		}
 		try {
 			SpielImpl implObj = new SpielImpl();
-			Naming.bind("Spielbrett", implObj);
+			Naming.bind("server", implObj);
 
 			System.out.println("Der Server wurde erfolgreich gestartet.");
 		} catch (Exception e) {
