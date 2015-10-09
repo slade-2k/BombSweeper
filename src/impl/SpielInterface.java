@@ -4,7 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface SpielInterface extends Remote {
-	public void login(String name) throws RemoteException;
+	public Boolean login(String name) throws RemoteException;
 	/*
 	 * Spieler übergibt seinen gewählten Namen an den Server und meldet sich
 	 * über diesen an Entspricht quasi setName
@@ -32,13 +32,22 @@ public interface SpielInterface extends Remote {
 	 * dieser Methode realisiert werden kann Nach Schuss wird das Feld auf dem
 	 * Client local disabled
 	 */
-	
+
 	public Boolean waitForBombs(String name) throws RemoteException;
+
 	public void toggleStatus(String name, String oppName) throws RemoteException;
+
 	public Boolean getPlayerStatus(String name) throws RemoteException;
+
 	public void rollTheDice(String name, String oppname) throws RemoteException;
+
 	public Boolean getScore(String name) throws RemoteException;
+
 	public void setScore(String name) throws RemoteException;
+
 	public Boolean getGameOver() throws RemoteException;
+
 	public Boolean clientsAlive() throws RemoteException;
+	
+	public int getMaxBombs(String name) throws RemoteException;
 }

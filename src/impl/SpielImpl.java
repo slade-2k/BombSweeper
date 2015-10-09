@@ -18,10 +18,21 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	public SpielImpl() throws RemoteException {
 	}
 
-	public void login(String name) {
+	public Boolean login(String name) {
+		Iterator<String> it = players.keySet().iterator();
+		while (it.hasNext()) {
+			String key = (String) it.next();
+			if (name.equals(key)) {
+				return false;
+			}
+		}
+		if (name.equals("")) {
+			return false;
+		}
 		players.put(name, new Spieler(name));
 		Spieler player = players.get(name);
 		System.out.println("Spieler " + player.getName() + " hat sich angemeldet.");
+		return true;
 	}
 
 	public void logout(String name) {
@@ -39,9 +50,9 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 		}
 		return null;
 	}
-	
+
 	public Boolean clientsAlive() {
-		if(players.size() == 2){
+		if (players.size() == 2) {
 			return true;
 		}
 		return false;
@@ -55,6 +66,11 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 		} else {
 			return false;
 		}
+	}
+	
+	public int getMaxBombs(String name){
+		Spieler player = players.get(name);
+		return player.getMaxBombs();
 	}
 
 	public Boolean getGameOver() {

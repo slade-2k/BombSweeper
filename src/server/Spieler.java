@@ -9,6 +9,7 @@ public class Spieler {
 	private Boolean bombsSet = false;
 	private Boolean status = null;
 	private int hitCounter = 0;
+	private int maxBombs = 10;
 
 	public Spieler(String name) {
 		this.name = name;
@@ -31,9 +32,14 @@ public class Spieler {
 		hitCounter++;
 	}
 
+	
+	public int getMaxBombs(){
+		return maxBombs;
+	}
+	
 	public void setBombArray(String bombs[]) {
-		this.bombArray = new String[10];
-		this.bombArray = Arrays.copyOf(bombs, 10);
+		this.bombArray = new String[maxBombs];
+		this.bombArray = Arrays.copyOf(bombs, maxBombs);
 		this.bombsSet = true;
 	}
 
