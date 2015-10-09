@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.HeadlessException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,7 +81,7 @@ public class SpielClient {
 				spielGUI.paintShot(shot);
 				intConn.toggleStatus(playerName, oppName);
 				if (intConn.checkShot(oppName, shot.getActionCommand())) {
-					spielGUI.setButtonImage(".\\Sonstiges\\bomb.jpeg", shot);
+					spielGUI.setButtonImage(".\\Sonstiges\bomb.jpeg", shot);
 					intConn.setScore(playerName);
 
 					if (intConn.getScore(playerName) == true) {

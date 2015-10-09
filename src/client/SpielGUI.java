@@ -99,6 +99,7 @@ public class SpielGUI extends AbstractSpielClient {
 		e.setEnabled(false);
 	}
 
+	
 	public void windowClosing(WindowEvent e) {
 		splClient.exitGame("Spiel wird beendet.");
 	}
