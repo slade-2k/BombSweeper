@@ -20,7 +20,7 @@ public class Spieler{
 	}
 	
 	public Boolean getHitCounter() {
-		if(hitCounter == 10){
+		if(hitCounter == maxBombs){
 			return true;
 		}
 		else {

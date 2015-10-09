@@ -22,7 +22,6 @@ public class SpielGUI extends AbstractSpielClient {
 	private JButton[][] btnField = new JButton[10][10];
 	private SpielClient splClient;
 	private JPanel pnlField = new JPanel();
-	private StatusBarGUI statBar = new StatusBarGUI();
 
 	public void createGUI(SpielClient caller) {
 

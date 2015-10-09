@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+
 import javax.swing.JOptionPane;
 
 import impl.SpielInterface;
@@ -18,7 +19,6 @@ public class SpielClient {
 	private String playerName = null;
 	private String oppName = null;
 	private SpielGUI spielGUI = new SpielGUI();
-	private StatusBar sBar = new StatusBar();
 
 	public enum Zustand {
 		Setzen, Schieﬂen
@@ -118,19 +118,28 @@ public class SpielClient {
 
 	public void setBombs(String fields) throws RemoteException, InterruptedException {
 		setFields.add(fields);
-		if (setFields.size() == intConn.getMaxBombs(playerName)) {
-			String[] tempArr = new String[10];
+		int maxBombs = intConn.getMaxBombs(playerName);
+		if (setFields.size() == maxBombs) {
+			String[] tempArr = new String[maxBombs];
 
-			for (int x = 0; x < 10; x++) {
+			for (int x = 0; x < maxBombs; x++) {
 				tempArr[x] = setFields.get(x);
 			}
 
 			intConn.setBombs(playerName, tempArr);
 			JOptionPane.showMessageDialog(spielGUI, "Setzphase beendet");
 			try {
-				oppName = intConn.getOpponentName(playerName);
-				while (intConn.waitForBombs(oppName) == false) {
-					Thread.sleep(5000);
+				int counter = 0;
+				while (oppName == null) {
+					Thread.sleep(1000);
+					oppName = intConn.getOpponentName(playerName);
+					counter++;
+					if(counter == 10){
+						this.exitGame("Kein Spieler gefunden.");
+					}
+				}
+				while(!intConn.waitForBombs(oppName)){
+					Thread.sleep(1000);
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();

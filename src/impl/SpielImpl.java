@@ -98,6 +98,7 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	public Boolean checkShot(String name, String field) {
 		Spieler player = players.get(name);
 		if (Arrays.asList(player.getBombs()).contains(field)) {
+			setScore(name);
 			return true;
 		} else {
 			return false;
@@ -105,6 +106,7 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	}
 
 	public Boolean waitForBombs(String name) {
+		System.out.println(name + players);
 		Spieler player = players.get(name);
 		if (player.getBombIndentificator() == false) {
 			return false;
