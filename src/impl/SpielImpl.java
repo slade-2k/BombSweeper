@@ -14,6 +14,7 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	// public List<String> playerList = new ArrayList<String>();
 	private Map<String, Spieler> players = new HashMap<String, Spieler>();
 	private Boolean gameOver = false;
+	private int maxBombs = 10;
 
 	public SpielImpl() throws RemoteException {
 	}
@@ -35,6 +36,10 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 		return true;
 	}
 
+	public int getMaxBombs() {
+		return this.maxBombs;
+	}
+	
 	public void logout(String name) {
 		Spieler player = players.remove(name);
 		System.out.println("Spieler " + player.getName() + " hat das Spiel verlassen.");
@@ -59,18 +64,20 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	}
 
 	public Boolean getScore(String name) {
+		
+		Spieler player2 = players.get(getOpponentName(name));
 		Spieler player = players.get(name);
-		if (player.getHitCounter() == true) {
+		
+		System.out.println(player2.getName() + " " +player2.getHitCounter()+ " " + player2);
+		System.out.println(player.getName() + " " +player.getHitCounter() + " " + player);
+		
+		
+		if (player.getHitCounter() == maxBombs) {
 			gameOver = true;
 			return true;
 		} else {
 			return false;
 		}
-	}
-	
-	public int getMaxBombs(String name){
-		Spieler player = players.get(name);
-		return player.getMaxBombs();
 	}
 
 	public Boolean getGameOver() {
@@ -98,7 +105,7 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	public Boolean checkShot(String name, String field) {
 		Spieler player = players.get(name);
 		if (Arrays.asList(player.getBombs()).contains(field)) {
-			setScore(name);
+			setScore(getOpponentName(name));
 			return true;
 		} else {
 			return false;
@@ -106,7 +113,6 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	}
 
 	public Boolean waitForBombs(String name) {
-		System.out.println(name + players);
 		Spieler player = players.get(name);
 		if (player.getBombIndentificator() == false) {
 			return false;

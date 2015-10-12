@@ -49,5 +49,5 @@ public interface SpielInterface extends Remote {
 
 	public Boolean clientsAlive() throws RemoteException;
 	
-	public int getMaxBombs(String name) throws RemoteException;
+	public int getMaxBombs() throws RemoteException;
 }

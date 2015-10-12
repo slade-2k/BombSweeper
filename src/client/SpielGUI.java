@@ -90,6 +90,10 @@ public class SpielGUI extends AbstractSpielClient {
 			splClient.isGameOver();
 			splClient.setShot(((JButton) e.getSource()));
 		}
+		
+		else if (splClient.getCondition() == Zustand.Warten) {
+			
+		}
 	}
 	
 	public void paintShot(JButton e) {

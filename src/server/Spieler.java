@@ -9,7 +9,6 @@ public class Spieler{
 	private Boolean bombsSet = false;
 	private Boolean status = null;
 	private int hitCounter = 0;
-	private int maxBombs = 10;
 
 	public Spieler(String name) {
 		this.name = name;
@@ -19,27 +18,17 @@ public class Spieler{
 		return this.name;
 	}
 	
-	public Boolean getHitCounter() {
-		if(hitCounter == maxBombs){
-			return true;
-		}
-		else {
-			return false;
-		}
+	public int getHitCounter() {
+		return this.hitCounter;
 	}
 	
 	public void setHitCounter() {
-		hitCounter++;
-	}
-
-	
-	public int getMaxBombs(){
-		return maxBombs;
+		this.hitCounter++;
 	}
 	
 	public void setBombArray(String bombs[]) {
-		this.bombArray = new String[maxBombs];
-		this.bombArray = Arrays.copyOf(bombs, maxBombs);
+		this.bombArray = new String[bombs.length];
+		this.bombArray = Arrays.copyOf(bombs, bombs.length);
 		this.bombsSet = true;
 	}
 

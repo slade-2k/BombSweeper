@@ -18,14 +18,15 @@ public class SpielClient {
 	private List<String> setFields = new ArrayList<String>();
 	private String playerName = null;
 	private String oppName = null;
-	private SpielGUI spielGUI = new SpielGUI();
-
+	private SpielGUI spielGUI = new SpielGUI(); 
+	
 	public enum Zustand {
-		Setzen, Schieﬂen
+		Setzen, Schieﬂen, Warten
 	}
 
 	public Zustand zustand;
 
+	
 	public void exitGame(String message) {
 		try {
 			intConn.logout(playerName);
@@ -89,7 +90,6 @@ public class SpielClient {
 				intConn.toggleStatus(playerName, oppName);
 				if (intConn.checkShot(oppName, shot.getActionCommand())) {
 					spielGUI.setButtonImage(".\\Sonstiges\\bomb.jpeg", shot);
-					intConn.setScore(playerName);
 
 					if (intConn.getScore(playerName) == true) {
 						this.exitGame("Herzlichen Gl¸ckwunsch!\nSie haben gewonnen.");
@@ -104,7 +104,7 @@ public class SpielClient {
 			this.exitGame("Die Verbindung zum Server wurde unterbrochen.");
 		}
 	}
-
+	
 	public void initGame() {
 		try {
 			intConn = this.getConn();
@@ -118,7 +118,7 @@ public class SpielClient {
 
 	public void setBombs(String fields) throws RemoteException, InterruptedException {
 		setFields.add(fields);
-		int maxBombs = intConn.getMaxBombs(playerName);
+		int maxBombs = intConn.getMaxBombs();
 		if (setFields.size() == maxBombs) {
 			String[] tempArr = new String[maxBombs];
 
@@ -127,37 +127,19 @@ public class SpielClient {
 			}
 
 			intConn.setBombs(playerName, tempArr);
-			JOptionPane.showMessageDialog(spielGUI, "Setzphase beendet");
-			try {
-				int counter = 0;
-				while (oppName == null) {
-					Thread.sleep(1000);
-					oppName = intConn.getOpponentName(playerName);
-					counter++;
-					if(counter == 10){
-						this.exitGame("Kein Spieler gefunden.");
-					}
-				}
-				while(!intConn.waitForBombs(oppName)){
-					Thread.sleep(1000);
-				}
-			} catch (RemoteException e) {
-				e.printStackTrace();
-				this.exitGame("Die Verbindung zum Server wurde unterbrochen.");
-			} catch (Exception e) {
-				e.printStackTrace();
-				this.exitGame("Es wurde kein anderer Spieler gefunden!\nDas Spiel wird beendet.");
-			}
-
+			zustand = Zustand.Warten;
 			spielGUI.clearField();
-			intConn.rollTheDice(playerName, oppName);
-			JOptionPane.showMessageDialog(spielGUI, "Spieler bereit.");
-			if (intConn.getPlayerStatus(playerName)) {
-				JOptionPane.showMessageDialog(spielGUI, "Ihr Zug.");
-			}
-			zustand = Zustand.Schieﬂen;
-			// spielGUI.setEnabled(intConn.getPlayerStatus(playerName));
+			GetBombsThread gbThread = new GetBombsThread();
+			gbThread.initThread(intConn, this, playerName, spielGUI);
+			JOptionPane.showMessageDialog(spielGUI, "Setzphase beendet");	
 		}
+	}
+		
+	public void setOpponentName(String name) {
+		this.oppName = name;
+	}
+	public void setCondition(Zustand zustand) {
+		this.zustand = zustand;
 	}
 	
 	public static void main(String args[]) {
