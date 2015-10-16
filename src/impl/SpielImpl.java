@@ -13,7 +13,6 @@ import server.Spieler;
 public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	// public List<String> playerList = new ArrayList<String>();
 	private Map<String, Spieler> players = new HashMap<String, Spieler>();
-	private Boolean gameOver = false;
 	private int maxBombs = 10;
 
 	public SpielImpl() throws RemoteException {
@@ -68,23 +67,11 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 		Spieler player2 = players.get(getOpponentName(name));
 		Spieler player = players.get(name);
 		
-		System.out.println(player2.getName() + " " +player2.getHitCounter()+ " " + player2);
-		System.out.println(player.getName() + " " +player.getHitCounter() + " " + player);
-		
-		
 		if (player.getHitCounter() == maxBombs) {
-			gameOver = true;
 			return true;
 		} else {
 			return false;
 		}
-	}
-
-	public Boolean getGameOver() {
-		if (gameOver == true) {
-			return true;
-		}
-		return false;
 	}
 
 	public void setScore(String name) {

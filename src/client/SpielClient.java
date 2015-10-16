@@ -68,11 +68,8 @@ public class SpielClient {
 		zustand = Zustand.Setzen;
 	}
 
-	public void isGameOver() {
+	public void isAlive() {
 		try {
-			if (intConn.getGameOver() == true) {
-				this.exitGame("Game over!\nSchade, Sie haben verloren.");
-			}
 			if (intConn.clientsAlive() == false) {
 				this.exitGame("Ihr Gegenspieler hat das Spiel verlassen.\nSie haben gewonnen!");
 			}
@@ -130,8 +127,8 @@ public class SpielClient {
 			zustand = Zustand.Warten;
 			spielGUI.clearField();
 			GetBombsThread gbThread = new GetBombsThread();
-			gbThread.initThread(intConn, this, playerName, spielGUI);
-			JOptionPane.showMessageDialog(spielGUI, "Setzphase beendet");	
+			gbThread.initGetBombsThread(intConn, this, playerName, spielGUI);
+			spielGUI.setStatusText("Warte auf Gegner");
 		}
 	}
 		

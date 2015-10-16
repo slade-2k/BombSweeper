@@ -13,6 +13,7 @@ public class GetBombsThread extends Thread {
 	private SpielInterface intConn;
 	private String playerName;
 	private SpielGUI spielGUI;
+	private StatusBarThread statusThread = new StatusBarThread();
 	private String oppName = null;
 	
 	@Override
@@ -39,11 +40,12 @@ public class GetBombsThread extends Thread {
 			}
 			splClient.setOpponentName(oppName);
 			splClient.setCondition(Zustand.Schieﬂen);
+			statusThread.initStatusThread(intConn, playerName, splClient, spielGUI);
 		} catch (RemoteException e) {
 		}
 	}
 	
-	public synchronized void initThread(SpielInterface intConn, SpielClient splClient, String playerName, SpielGUI spielGUI) {
+	public void initGetBombsThread(SpielInterface intConn, SpielClient splClient, String playerName, SpielGUI spielGUI) {
 		this.splClient = splClient;
 		this.intConn = intConn;
 		this.playerName = playerName;
