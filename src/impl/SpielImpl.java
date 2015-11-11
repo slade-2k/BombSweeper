@@ -63,7 +63,6 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 				return key;
 			}
 		}
-		LOGGER.error("Error occurred while trying to get the opponent name");
 		return null;
 	}
 

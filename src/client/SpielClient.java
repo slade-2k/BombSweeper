@@ -42,8 +42,8 @@ public class SpielClient {
 			this.userLogin();
 		} catch (RemoteException e) {
 			LOGGER.error("Error initializing the Game error: " + e);
-			this.exitGame("Fehler bei dem Erstellen der Verbindung!");
 			e.printStackTrace();
+			this.exitGame("Fehler bei dem Erstellen der Verbindung!");
 		}
 	}
 	
@@ -58,6 +58,8 @@ public class SpielClient {
 			return interfaceConn;
 		} catch (Exception e) {
 			LOGGER.error("Error establishing connection with "+ ip +" error: "+ e);
+			e.printStackTrace();
+			this.exitGame("Der Server konnte nicht gefunden werden!");
 			return null;
 		}
 	}
@@ -71,7 +73,6 @@ public class SpielClient {
 			}
 			playerName = input.toUpperCase();
 		} while (!intConn.login(playerName));
-		LOGGER.info("Player " + playerName + " connected");
 		zustand = Zustand.Setzen;
 		LOGGER.info("State changed to " + zustand);
 	}
@@ -161,7 +162,7 @@ public class SpielClient {
 			System.exit(0);
 		} catch (RemoteException logout) {
 			JOptionPane.showMessageDialog(spielGUI,
-					"Bei dem beenden des Spiels ist ein Fehler aufgetreten!\nIst der Server offline?");
+					"Bei dem Beenden des Spiels ist ein Fehler aufgetreten!\nIst der Server offline?");
 			LOGGER.fatal("Game crashed while beeing closed! error: " + logout);
 			System.exit(0);
 		}
