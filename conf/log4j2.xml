@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<RollingFile name="ROLLING_FILE" fileName=".\log\ErrorLog.txt" filePattern=".\log\ErrorLog-%d{yyyy.MM.dd}-%i.txt">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="15 KB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="ROLLING_FILE_CLIENT" fileName=".\log\ClientLog.txt" filePattern=".\log\ClientLog-%d{yyyy.MM.dd}-%i.txt">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="15 KB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="ROLLING_FILE_IMPL" fileName=".\log\ImplLog.txt" filePattern=".\log\ImplLog-%d{yyyy.MM.dd}-%i.txt">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="15 KB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="ROLLING_FILE_CLIENTERRORS" fileName=".\log\ClientErrors.txt" filePattern=".\log\ClientErrors-%d{yyyy.MM.dd}-%i.txt">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+			<Filters>
+				<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+				<ThresholdFilter level="fatal" onMatch="ACCEPT" onMismatch="DENY"/>
+			</Filters>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="15 KB"/>
+			</Policies>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="impl">
+			<AppenderRef ref="ROLLING_FILE_IMPL" level="info"/>
+		</Logger>
+		<Logger name="client.SpielClient" level="error">
+			<AppenderRef ref="ROLLING_FILE_CLIENTERRORS"/>
+		</Logger>
+		<Logger name="client" level="info">
+			<AppenderRef ref="ROLLING_FILE_CLIENT"/>
+		</Logger>
+		<Root level="warn">
+			<AppenderRef ref="ROLLING_FILE"/>
+		</Root>
+	</Loggers>
+</Configuration>
