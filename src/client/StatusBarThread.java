@@ -21,7 +21,7 @@ public class StatusBarThread extends Thread{
 	public void run(){
 		LOGGER.info("Thread " + getClass() + " successfully started");
 		try {
-			while(intConn.getScore(playerName) == false && intConn.getScore(intConn.getOpponentName(playerName)) == false) {
+			while(!intConn.getScore(playerName) && !intConn.getScore(intConn.getOpponentName(playerName))) {
 				if(intConn.getPlayerStatus(playerName) == true) {
 					spielGUI.setStatusText("Ready");
 				}
@@ -34,7 +34,7 @@ public class StatusBarThread extends Thread{
 				LOGGER.info("Player " + playerName + " lost the game");
 				splClient.exitGame("GAME OVER!\nSchade, Sie haben verloren!");
 			}
-		}catch(RemoteException e){
+		}catch(Exception e){
 			LOGGER.warn("Error occurred in Thread " + getClass());
 		}
 	}

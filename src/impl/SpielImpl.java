@@ -74,11 +74,7 @@ public class SpielImpl extends UnicastRemoteObject implements SpielInterface {
 	}
 
 	public Boolean getScore(String name) {
-		
-		//Spieler player2 = players.get(getOpponentName(name));
-		Spieler player = players.get(name);
-		
-		if (player.getHitCounter() == maxBombs) {
+		if (players.get(name).getHitCounter() == maxBombs) {
 			LOGGER.info("Hitcounter reached");
 			return true;
 		} else {

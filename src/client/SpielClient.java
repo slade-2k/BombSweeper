@@ -2,13 +2,14 @@ package client;
 
 import java.awt.Color;
 import java.awt.HeadlessException;
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-
 import javax.swing.JOptionPane;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +31,7 @@ public class SpielClient {
 
 	public Zustand zustand;
 
+	
 	public static void main(String args[]) {
 		SpielClient spielClient = new SpielClient();
 		spielClient.initGame();
@@ -48,7 +50,7 @@ public class SpielClient {
 	}
 	
 	private SpielInterface getConn() {
-		String ip = JOptionPane.showInputDialog(null, "Geben Sie die IP des Severs ein:", "192.168.5.41");
+		String ip = JOptionPane.showInputDialog(null, "Geben Sie die IP des Severs ein:", "localhost");
 		if(ip == null){
 			System.exit(0);
 		}
@@ -56,7 +58,7 @@ public class SpielClient {
 			SpielInterface interfaceConn = (SpielInterface) Naming.lookup("rmi://"+ip+"/server"); //" + ip + ":" +Registry.REGISTRY_PORT + "\\server"
 			LOGGER.info("Connection established with " + ip);
 			return interfaceConn;
-		} catch (Exception e) {
+		} catch (RemoteException | MalformedURLException | NotBoundException e) {
 			LOGGER.error("Error establishing connection with "+ ip +" error: "+ e);
 			e.printStackTrace();
 			this.exitGame("Der Server konnte nicht gefunden werden!");

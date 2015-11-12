@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
+	<Properties>
+		<Property name="filename">C:\Users\iho\Documents\BombLogs</Property>
+	<!---	${env:USERPROFILE} 	-->
+	<!---	${env:TEMP}			-->
+	<!---	${filename}			-->
+	</Properties>
 	<Appenders>
-		<RollingFile name="ROLLING_FILE" fileName=".\log\ErrorLog.txt" filePattern=".\log\ErrorLog-%d{yyyy.MM.dd}-%i.txt">
+		<Async name="ASYNCROLLING_FILE">
+			<AppenderRef ref="ROLLING_FILE"/>
+		</Async>
+		<RollingFile name="ROLLING_FILE" fileName="${env:USERPROFILE}\BombSearch\Log\ErrorLog.txt" filePattern="${env:USERPROFILE}\BombSearch\Log\ErrorLog-%d{yyyy.MM.dd}-%i.txt">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n"/>
 			<Policies>
 				<TimeBasedTriggeringPolicy/>
 				<SizeBasedTriggeringPolicy size="15 KB"/>
 			</Policies>
 		</RollingFile>
-		<RollingFile name="ROLLING_FILE_CLIENT" fileName=".\log\ClientLog.txt" filePattern=".\log\ClientLog-%d{yyyy.MM.dd}-%i.txt">
+		<RollingFile name="ROLLING_FILE_CLIENT" fileName="${env:USERPROFILE}\BombSearch\Log\Client\ClientLog.txt" filePattern="${env:USERPROFILE}\BombSearch\Log\Client\ClientLog-%d{yyyy.MM.dd}-%i.txt">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n"/>
 			<Policies>
 				<TimeBasedTriggeringPolicy/>
 				<SizeBasedTriggeringPolicy size="15 KB"/>
 			</Policies>
 		</RollingFile>
-		<RollingFile name="ROLLING_FILE_IMPL" fileName=".\log\ImplLog.txt" filePattern=".\log\ImplLog-%d{yyyy.MM.dd}-%i.txt">
+		<RollingFile name="ROLLING_FILE_IMPL" fileName="${env:USERPROFILE}\BombSearch\Log\Server\ImplLog.txt" filePattern="${env:USERPROFILE}\BombSearch\Log\Server\ImplLog-%d{yyyy.MM.dd}-%i.txt">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n"/>
 			<Policies>
 				<TimeBasedTriggeringPolicy/>
 				<SizeBasedTriggeringPolicy size="15 KB"/>
 			</Policies>
 		</RollingFile>
-		<RollingFile name="ROLLING_FILE_CLIENTERRORS" fileName=".\log\ClientErrors.txt" filePattern=".\log\ClientErrors-%d{yyyy.MM.dd}-%i.txt">
+		<RollingFile name="ROLLING_FILE_CLIENTERRORS" fileName="${env:USERPROFILE}\BombSearch\Log\Client\ClientErrors.txt" filePattern="${env:USERPROFILE}\BombSearch\Log\Client\ClientErrors-%d{yyyy.MM.dd}-%i.txt">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n"/>
 			<Filters>
 				<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
@@ -45,7 +54,7 @@
 			<AppenderRef ref="ROLLING_FILE_CLIENTERRORS"/>
 		</Logger>
 		<Root level="info">
-			<AppenderRef ref="ROLLING_FILE"/>
+			<AppenderRef ref="ASYNCROLLING_FILE"/>
 		</Root>
 	</Loggers>
 </Configuration>
